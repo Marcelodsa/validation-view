@@ -54,4 +54,14 @@ export const certificateApi = {
     
     return await response.json();
   },
+
+  async getSubmissions(enrollmentNumber) {
+    const response = await fetch(API_ENDPOINTS.CERTIFICATE.GET_SUBMISSIONS(enrollmentNumber));
+    
+    if (!response.ok) {
+      throw new Error('Erro ao buscar certificados enviados.');
+    }
+    
+    return await response.json();
+  },
 };
