@@ -71,6 +71,12 @@ export default function DocumentTable({ submissions }) {
                   Formato
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Horas Contabilizadas
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Categoria
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Ações
                 </th>
               </tr>
@@ -98,6 +104,20 @@ export default function DocumentTable({ submissions }) {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {getFileFormat(submission.mime_type)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {submission.status === 'approved' && submission.final_hours ? (
+                        <span className="font-semibold text-green-700">{submission.final_hours}h</span>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {submission.status === 'approved' && submission.category_name ? (
+                        submission.category_name
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <button
