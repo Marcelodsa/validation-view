@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
   },
   CERTIFICATE: {
     SUBMIT: `${API_BASE_URL}/certificate/submit`,
+    GET_SUBMISSIONS: (enrollmentNumber) => `${API_BASE_URL}/certificate/student/${enrollmentNumber}/submissions`,
   },
 };
 
