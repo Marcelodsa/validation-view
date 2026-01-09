@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DocumentForm from "../components/DocumentForm";
 import DocumentTable from "../components/DocumentTable";
 import StudentLogin from "../components/StudentLogin";
@@ -9,9 +9,26 @@ import { certificateApi } from "../services/api";
 export default function AlunoDashboard() {
   const [studentData, setStudentData] = useState(null);
   const [view, setView] = useState('login');
-  const [documentos, setDocumentos] = useState([]);
+  const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState({ message: '', type: '' });
+
+  const fetchSubmissions = async (enrollmentNumber) => {
+    try {
+      const response = await certificateApi.getSubmissions(enrollmentNumber);
+      if (response.submissions) {
+        setSubmissions(response.submissions);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar certificados:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (studentData && view === 'dashboard') {
+      fetchSubmissions(studentData.enrollment_number);
+    }
+  }, [studentData, view]);
 
   const handleLoginSuccess = (student) => {
     setStudentData(student);
@@ -25,7 +42,7 @@ export default function AlunoDashboard() {
   const handleLogout = () => {
     setStudentData(null);
     setView('login');
-    setDocumentos([]);
+    setSubmissions([]);
     setNotification({ message: '', type: '' });
   };
 
@@ -42,15 +59,7 @@ export default function AlunoDashboard() {
           type: 'success'
         });
 
-        const novoDoc = {
-          id: response.submission_id,
-          filename: response.filename,
-          fileSize: response.file_size,
-          status: response.status,
-          submittedAt: new Date(response.submitted_at).toLocaleString('pt-BR'),
-          checksum: response.checksum,
-        };
-        setDocumentos([novoDoc, ...documentos]);
+        await fetchSubmissions(studentData.enrollment_number);
       }
     } catch (error) {
       setNotification({
@@ -125,7 +134,7 @@ export default function AlunoDashboard() {
 
         <DocumentForm onSubmit={handleSubmit} loading={loading} />
         <h2 className="text-xl font-semibold mt-6 mb-4">Certificados Enviados</h2>
-        <DocumentTable documentos={documentos} />
+        <DocumentTable submissions={submissions} />
       </main>
     </div>
   );
