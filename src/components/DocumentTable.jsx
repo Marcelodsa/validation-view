@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 export default function DocumentTable({ submissions }) {
   const [viewFile, setViewFile] = useState(null);
+  const [viewNotes, setViewNotes] = useState(null);
 
   const getStatusDisplay = (status) => {
     const statusMap = {
@@ -41,6 +42,14 @@ export default function DocumentTable({ submissions }) {
 
   const closeViewer = () => {
     setViewFile(null);
+  };
+
+  const handleViewNotes = (notes) => {
+    setViewNotes(notes);
+  };
+
+  const closeNotes = () => {
+    setViewNotes(null);
   };
 
   if (!submissions || submissions.length === 0) {
@@ -119,13 +128,21 @@ export default function DocumentTable({ submissions }) {
                         <span className="text-gray-400">-</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                       <button
                         onClick={() => handleViewFile(submission.download_url, submission.mime_type)}
                         className="text-blue-600 hover:text-blue-800 font-medium"
                       >
                         Visualizar
                       </button>
+                      {submission.coordinator_notes && (
+                        <button
+                          onClick={() => handleViewNotes(submission.coordinator_notes)}
+                          className="text-purple-600 hover:text-purple-800 font-medium"
+                        >
+                          Ver Notas
+                        </button>
+                      )}
                     </td>
                   </tr>
                 );
@@ -169,6 +186,27 @@ export default function DocumentTable({ submissions }) {
                   </a>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {viewNotes && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={closeNotes}>
+          <div className="bg-white rounded-lg max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="border-b px-6 py-4 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900">Notas do Coordenador</h3>
+              <button
+                onClick={closeNotes}
+                className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                <p className="text-gray-800 whitespace-pre-wrap">{viewNotes}</p>
+              </div>
             </div>
           </div>
         </div>
